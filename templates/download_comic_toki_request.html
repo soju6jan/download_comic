@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div>
+  {{ macros.setting_input_text_and_buttons('code', '작품 Code', [['analysis_btn', '분석'], ['go_btn', 'Go Site']], desc=['URL이나 작품 코드']) }}
+</div> <!--전체-->
+
+<form id="program_auto_form">
+<div id='episode_list'></div>
+<form>
+
+<script type="text/javascript">
+var package_name = "{{arg['package_name'] }}";
+var sub = "{{arg['sub'] }}";
+var site_url = "{{arg['url']}}";
+var current_data = null;
+
+$(document).ready(function(){
+  if ( "{{arg['current_code']}}" != "" ) {
+    document.getElementById("code").value = "{{arg['current_code']}}";
+    document.getElementById("analysis_btn").click();
+  }
+});
+
+$("body").on('click', '#analysis_btn', function(e){
+  e.preventDefault();
+  code = document.getElementById("code").value
+  $.ajax({
+    url: '/' + package_name + '/ajax/' + sub + '/analysis',
+    type: "POST",
+    cache: false,
+    data: {code:code},
+    dataType: "json",
+    success: function (ret) {
+      if (ret.ret == 'success' && ret.data != null) {
+        make_program(ret.data)
+      } else {
+        $.notify('<strong>분석 실패</strong><br>' + ret.log, {type: 'warning'});
+      }
+    }
+  });
+});
+
+
+function make_program(data) {
+  current_data = data;
+  str = '';
+  tmp = '<div class="form-inline">'
+  tmp += m_button('check_download_btn', '선택 다운로드 추가', []);
+  tmp += m_button('all_check_on_btn', '전체 선택', []);
+  tmp += m_button('all_check_off_btn', '전체 해제', []);
+  tmp += '</div>';
+  str += tmp
+  // program
+  str += m_hr_black();
+  str += m_row_start(0);
+  tmp = ''
+  if (data.poster != null) 
+    tmp = '<img src="' + data.poster + '" class="img-fluid">';
+  str += m_col(3, tmp)
+  tmp = ''
+  tmp += m_row_start(2) + m_col(3, '제목', 'right') + m_col(9, data.title) + m_row_end();
+  tmp += m_row_start(2) + m_col(3, '작가', 'right') + m_col(9, data.author) + m_row_end();
+  tmp += m_row_start(2) + m_col(3, '분류', 'right') + m_col(9, data.genre) + m_row_end();
+  str += m_col(9, tmp)
+  str += m_row_end();
+  
+  str += m_hr_black();
+  for (i in data.episodes) {
+    str += m_row_start(); tmp = '';
+    str += m_col(1, data.episodes[i].idx)
+    tmp = '<strong>' + data.episodes[i].title+ '</strong>';
+    str += m_col(8, tmp)
+    
+    tmp = '<div class="form-inline">'
+    tmp += '<input id="checkbox_'+i+'" name="checkbox_'+i+'" type="checkbox" checked data-toggle="toggle" data-on="선 택" data-off="-" data-onstyle="success" data-offstyle="danger" data-size="small">&nbsp;&nbsp;&nbsp;&nbsp;'
+    tmp += m_button('add_queue_btn', '다운로드 추가', [{'key':'idx', 'value':i}])
+    tmp += '</div>'
+    str += m_col(3, tmp)
+    str += m_row_end();
+    if (i != data.length -1) str += m_hr(0);
+  }
+  document.getElementById("episode_list").innerHTML = str;
+  $('input[id^="checkbox_"]').bootstrapToggle()
+}
+
+$("body").on('click', '#all_check_on_btn', function(e){
+  e.preventDefault();
+  $('input[id^="checkbox_"]').bootstrapToggle('on')
+});
+
+$("body").on('click', '#all_check_off_btn', function(e){
+  e.preventDefault();
+  $('input[id^="checkbox_"]').bootstrapToggle('off')
+});
+
+$("body").on('click', '#add_queue_btn', function(e){
+  e.preventDefault();
+  data = current_data.episodes[$(this).data('idx')];
+  $.ajax({
+    url: '/' + package_name + '/ajax/' + sub + '/add_queue',
+    type: "POST", 
+    cache: false,
+    data: {data:JSON.stringify(data)},
+    dataType: "json",
+    success: function (data) {
+      if (data.ret == 'enqueue_db_append' || data.ret == 'enqueue_db_exist') {
+        $.notify('<strong>다운로드 작업을 추가 하였습니다.</strong>', {type: 'success'});
+      } else if (data.ret == 'queue_exist') {
+        $.notify('<strong>이미 큐에 있습니다. 삭제 후 추가하세요.</strong>', {type: 'warning'});
+      } else if (data.ret == 'db_completed') {
+        $.notify('<strong>DB에 완료 기록이 있습니다.</strong>', {type: 'warning'});
+      } else {
+        $.notify('<strong>추가 실패</strong><br>' + ret.log, {type: 'warning'});
+      }
+    }
+  });
+});
+
+$("body").on('click', '#check_download_btn', function(e){
+  e.preventDefault();
+  all = $('input[id^="checkbox_"]');
+  data = [];
+  for (i in all) {
+    if (all[i].checked) {
+      idx = parseInt(all[i].id.split('_')[1])
+      data.push(current_data.episodes[idx]);
+    }
+  }
+  if (data.length == 0) {
+    $.notify('<strong>선택하세요.</strong>', {type: 'warning'});
+    return;
+  }
+  $.ajax({
+    url: '/' + package_name + '/ajax/' + sub + '/add_queue_checked_list',
+    type: "POST", 
+    cache: false,
+    data: {data:JSON.stringify(data)},
+    dataType: "json",
+    success: function (data) {
+      $.notify('<strong>백그라운드로 작업을 추가합니다.</strong>', {type: 'success'});
+    }
+  });
+});
+
+$("body").on('click', '#go_btn', function(e){
+  e.preventDefault();
+  window.open(site_url, "_blank");
+});
+
+</script>
+{% endblock %}
