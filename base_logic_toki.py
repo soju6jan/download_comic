@@ -189,29 +189,34 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
 
 
         def get_series_info(self, code):
-            url = P.ModelSetting.get('{}_url'.format(module_name)) + '/{}/'.format(define[module_name]['url_prefix']) + code
-            root = lxml.html.fromstring(requests.get(url).content) 
-            series = {}
-            series['code'] = code
-            series['title'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[1]/span/b')[0].text_content().strip()
-            try: series['poster'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[1]/div/div/img')[0].attrib['src'].strip()
-            except: series['poster'] = ''
-            try: series['author'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[2]/a')[0].text_content().strip()
-            except: series['author'] = ''
-            try: series['genre'] = [x.text_content().strip() for x in root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[3]/a')]
-            except: series['genre'] = []
-            series['episodes'] = []
-            for item in root.xpath('//ul[@class="list-body"]/li'):
-                episode = {}
-                episode['idx'] = int(item.xpath('div[1]')[0].text_content().strip())
-                episode['title'] = ''.join(item.xpath('div[2]/a/text()')).strip()
-                episode['url'] = item.xpath('div[2]/a')[0].attrib['href'].strip().split('?')[0]
-                match = re.compile(r'%s/(?P<code>.*?)($|/|\?)' % define[module_name]['url_prefix']).search(episode['url'])
-                episode['code'] = match.group('code')
-                episode['series_code'] = code
-                episode['series_title'] = series['title']
-                series['episodes'].append(episode)
-            return series
+            try:
+                url = P.ModelSetting.get('{}_url'.format(module_name)) + '/{}/'.format(define[module_name]['url_prefix']) + code
+                root = lxml.html.fromstring(requests.get(url).content) 
+                series = {}
+                series['code'] = code
+                series['title'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[1]/span/b')[0].text_content().strip()
+                try: series['poster'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[1]/div/div/img')[0].attrib['src'].strip()
+                except: series['poster'] = ''
+                try: series['author'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[2]/a')[0].text_content().strip()
+                except: series['author'] = ''
+                try: series['genre'] = [x.text_content().strip() for x in root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[3]/a')]
+                except: series['genre'] = []
+                series['episodes'] = []
+                for item in root.xpath('//ul[@class="list-body"]/li'):
+                    episode = {}
+                    episode['idx'] = int(item.xpath('div[1]')[0].text_content().strip())
+                    episode['title'] = ''.join(item.xpath('div[2]/a/text()')).strip()
+                    episode['url'] = item.xpath('div[2]/a')[0].attrib['href'].strip().split('?')[0]
+                    match = re.compile(r'%s/(?P<code>.*?)($|/|\?)' % define[module_name]['url_prefix']).search(episode['url'])
+                    episode['code'] = match.group('code')
+                    episode['series_code'] = code
+                    episode['series_title'] = series['title']
+                    series['episodes'].append(episode)
+                return series
+            except Exception as e: 
+                logger.debug('URL:%s', url)
+                logger.error('Exception:%s', e)
+                logger.error(traceback.format_exc())
 
 
         def add(self, episode_info):
