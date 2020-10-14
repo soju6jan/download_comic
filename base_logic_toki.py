@@ -295,7 +295,9 @@ def get_queue_entity(module_name, ModelItem):
                         continue
                     else:
                         ret = self.image_download(tmp, filepath)
-                        if ret != 200:
+                        if ret == 200:
+                            continue
+                        else:
                             self.set_status(u'실패')
                             shutil.rmtree(self.savepath)
                             return
