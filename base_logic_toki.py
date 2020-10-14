@@ -181,8 +181,9 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
                 data = ModelItem.get_list_incompleted()
                 for db_entity in data:
                     add_ret = self.add(db_entity.to_queue_info())
-                    if add_ret.startswith('enqueue'):
-                        self.socketio_callback('list_refresh', '')
+                    #if add_ret.startswith('enqueue'):
+                    #    self.socketio_callback('list_refresh', '')
+                self.socketio_callback('list_refresh', '')
             thread = threading.Thread(target=func, args=())
             thread.daemon = True  
             thread.start()
@@ -247,7 +248,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
                 url = '{}/webtoon'.format(ModelSetting.get('{}_url'.format(module_name)))
                 root = lxml.html.fromstring(requests.get(url).content)
                 ret = [ t.attrib['href'].split('webtoon/')[1].split('/')[0] for t in root.xpath('//div[@class="in-lable trans-bg-black"]/a[contains(@href,"/webtoon/")]') ]
-            return ret
+            return ret[:30]
     return LogicToki
 
 
