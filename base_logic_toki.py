@@ -291,7 +291,9 @@ def get_queue_entity(module_name, ModelItem):
                     filepath = os.path.join(self.savepath, str(idx+1).zfill(3) + '.' + tmp.split('.')[-1])
                     ret = self.image_download(tmp, filepath)
                     # 실패처리
-                    if ret != 200:
+                    if ret == 200:
+                        continue
+                    else:
                         ret = self.image_download(tmp, filepath)
                         if ret != 200:
                             self.set_status(u'실패')
