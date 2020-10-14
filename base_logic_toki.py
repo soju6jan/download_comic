@@ -292,11 +292,11 @@ def get_queue_entity(module_name, ModelItem):
                     ret = self.image_download(tmp, filepath)
                     # 실패처리
                     if ret == 200:
-                        continue
+                        pass
                     else:
                         ret = self.image_download(tmp, filepath)
                         if ret == 200:
-                            continue
+                            pass
                         else:
                             self.set_status(u'실패')
                             shutil.rmtree(self.savepath)
