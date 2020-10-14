@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
-import os, sys, traceback, re, json, threading, time
+import os, sys, traceback, re, json, threading, time, shutil
 from datetime import datetime
 # third-party
 import requests
@@ -281,7 +281,7 @@ def get_queue_entity(module_name, ModelItem):
                     os.makedirs(self.savepath)
                 if ModelSetting.get('{}_use_zip'.format(module_name)) and os.path.exists(self.savepath + '.zip'):
                     self.percent = 100
-                    self.set_status('파일 있음')
+                    self.set_status(u'파일 있음')
                     self.savepath = self.savepath + '.zip'
                     completed_flag = True
                     return
@@ -289,6 +289,13 @@ def get_queue_entity(module_name, ModelItem):
                 for idx, tmp in enumerate(image_list):
                     filepath = os.path.join(self.savepath, str(idx+1).zfill(3) + '.' + tmp.split('.')[-1])
                     ret = self.image_download(tmp, filepath)
+                    # 실패처리
+                    if ret != 200:
+                        ret = self.image_download(tmp, filepath)
+                        if ret != 200:
+                            self.set_status(u'실패')
+                            shutil.rmtree(self.savepath)
+                            return
                     self.percent = (int)((idx+1) * 100 / self.total_image_count)
                     self.refresh_status()
                     
