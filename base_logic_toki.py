@@ -288,7 +288,12 @@ def get_queue_entity(module_name, ModelItem):
                     return
                 self.set_status(u'다운로드중')
                 for idx, tmp in enumerate(image_list):
-                    filepath = os.path.join(self.savepath, str(idx+1).zfill(3) + '.' + tmp.split('.')[-1])
+                    try:
+                        ext = tmp.split('/')[-1].split('.')[-1]
+                        if len(ext) > 4:
+                            ext = 'jpg'
+                    except: pass
+                    filepath = os.path.join(self.savepath, str(idx+1).zfill(3) + '.' + ext)
                     ret = self.image_download(tmp, filepath)
                     # 실패처리
                     if ret != 200:
