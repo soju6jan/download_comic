@@ -293,11 +293,14 @@ def get_queue_entity(module_name, ModelItem):
                         if len(ext) > 4:
                             ext = 'jpg'
                     except: pass
+                    url = tmp
+                    if not url.startswith('http'):
+                        url = '%s%s' % (ModelSetting.get('{}_url'.format(self.module_logic.name)), tmp)
                     filepath = os.path.join(self.savepath, str(idx+1).zfill(3) + '.' + ext)
-                    ret = self.image_download(tmp, filepath)
+                    ret = self.image_download(url, filepath)
                     # 실패처리
                     if ret != 200:
-                        ret = self.image_download(tmp, filepath)
+                        ret = self.image_download(url, filepath)
                         if ret != 200:
                             self.set_status(u'실패')
                             shutil.rmtree(self.savepath)
