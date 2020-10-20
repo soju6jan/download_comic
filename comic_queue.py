@@ -2,12 +2,13 @@
 #########################################################
 # python
 import os, sys, traceback
-import threading, Queue, time
+import threading, time
 from datetime import datetime
 import abc
 # third-party
 import requests
 # sjva 공용
+from framework import py_queue
 #########################################################
 
 class ComicQueueEntity(abc.ABCMeta('ABC', (object,), {'__slots__': ()})):
@@ -82,7 +83,7 @@ class ComicQueue(object):
     def queue_start(self):
         try:
             if self.download_queue is None:
-                self.download_queue = Queue.Queue()
+                self.download_queue = py_queue.Queue()
             if self.download_thread is None:
                 self.download_thread = threading.Thread(target=self.download_thread_function, args=())
                 self.download_thread.daemon = True  

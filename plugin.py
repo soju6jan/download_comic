@@ -15,17 +15,17 @@ class P(object):
     logger = get_logger(package_name)
     blueprint = Blueprint(package_name, package_name, url_prefix='/%s' %  package_name, template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
     menu = {
-        'main' : [package_name, '만화 다운로드'],
+        'main' : [package_name, u'만화 다운로드'],
         'sub' : [
-            ['manatoki', '마나토끼'], ['newtoki', '뉴토끼'], ['log', '로그']
+            ['manatoki', u'마나토끼'], ['newtoki', u'뉴토끼'], ['log', u'로그']
         ], 
         'category' : 'service',
         'sub2' : {
             'manatoki' : [
-                ['setting', '설정'], ['request', '요청'], ['queue', '큐'], ['list', '목록']
+                ['setting', u'설정'], ['request', u'요청'], ['queue', u'큐'], ['list', u'목록']
             ],
             'newtoki' : [
-                ['setting', '설정'], ['request', '요청'], ['queue', '큐'], ['list', '목록']
+                ['setting', u'설정'], ['request', u'요청'], ['queue', u'큐'], ['list', u'목록']
             ],
         }
     }  
@@ -35,7 +35,7 @@ class P(object):
         'category_name' : 'service',
         'icon' : '',
         'developer' : 'soju6jan',
-        'description' : '만화 다운로드',
+        'description' : u'만화 다운로드',
         'home' : 'https://github.com/soju6jan/downloader_comic',
         'more' : '',
     }

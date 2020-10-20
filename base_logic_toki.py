@@ -56,7 +56,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
         }
 
         def __init__(self, P):
-            super(LogicToki, self).__init__(P, 'setting', scheduler_desc='{} 자동 다운로드'.format(define[module_name]['kor_name']))
+            super(LogicToki, self).__init__(P, 'setting', scheduler_desc=u'{} 자동 다운로드'.format(define[module_name]['kor_name']))
             self.name = module_name
             self.current_data = None
             default_route_socketio(P, self)
@@ -192,7 +192,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
         def get_series_info(self, code):
             try:
                 url = P.ModelSetting.get('{}_url'.format(module_name)) + '/{}/'.format(define[module_name]['url_prefix']) + code
-                root = lxml.html.fromstring(requests.get(url).content) 
+                root = lxml.html.fromstring(requests.get(url).text) 
                 series = {}
                 series['code'] = code
                 series['title'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[1]/span/b')[0].text_content().strip()
@@ -242,11 +242,11 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
         def get_recent_code_list(self):
             if module_name == 'manatoki':
                 url = '{}/page/update'.format(ModelSetting.get('{}_url'.format(module_name)))
-                root = lxml.html.fromstring(requests.get(url).content) 
+                root = lxml.html.fromstring(requests.get(url).text) 
                 ret = [ t.attrib['href'].split('comic/')[1] for t in root.xpath(u'//a[text()="전편보기"]') ]
             elif module_name == 'newtoki':
                 url = '{}/webtoon'.format(ModelSetting.get('{}_url'.format(module_name)))
-                root = lxml.html.fromstring(requests.get(url).content)
+                root = lxml.html.fromstring(requests.get(url).text)
                 ret = [ t.attrib['href'].split('webtoon/')[1].split('/')[0] for t in root.xpath('//div[@class="in-lable trans-bg-black"]/a[contains(@href,"/webtoon/")]') ]
             return ret[:30]
     return LogicToki
@@ -267,7 +267,7 @@ def get_queue_entity(module_name, ModelItem):
             try:
                 self.set_status(u'분석중')
                 url = '{}/{}/{}'.format(ModelSetting.get('{}_url'.format(self.module_logic.name)), define[module_name]['url_prefix'], self.info['code'])
-                data = requests.get(url).content
+                data = requests.get(url).text
                 tmp = ''.join(re.compile(r'html_data\+\=\'(.*?)\'\;').findall(data))
                 html = ''.join([chr(int(x, 16)) for x in tmp.rstrip('.').split('.')])
                 image_list = re.compile(r'src="/img/loading-image.gif"\sdata\-\w{11}="(.*?)"').findall(html)
