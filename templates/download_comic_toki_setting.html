@@ -23,6 +23,7 @@
       {{ macros.setting_input_int('max_queue_count', '동시 다운로드 수', value=arg['max_queue_count']) }}
       {{ macros.setting_checkbox('order_desc', '에피소드 최신순', value=arg['order_desc']) }}
       {{ macros.setting_checkbox('queue_auto_clear', '완료시 자동으로 큐목록에서 삭제', value=arg['queue_auto_clear']) }}
+      {{ macros.setting_input_text('append_web_index', '에피소드 제목 앞에 인덱싱', value=arg['append_web_index'], desc=['예) [%03d] => [001] 에피소드 제목', '%04d - => 0001 - 에피소드 제목']) }}
     {{ macros.m_tab_content_end() }}
 
     {{ macros.m_tab_content_start('auto', false) }}

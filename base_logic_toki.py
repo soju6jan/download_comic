@@ -53,6 +53,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
             '{}_auto_black_code_list'.format(module_name) : '',
             '{}_all_download'.format(module_name) : 'False',
             '{}_queue_auto_clear'.format(module_name) : 'False',
+            '{}_append_web_index'.format(module_name) : '',
         }
 
         def __init__(self, P):
@@ -195,7 +196,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
                 root = lxml.html.fromstring(requests.get(url).text) 
                 series = {}
                 series['code'] = code
-                series['title'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[1]/span/b')[0].text_content().strip()
+                series['title'] = u'%s' % root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[1]/span/b')[0].text_content().strip()
                 try: series['poster'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[1]/div/div/img')[0].attrib['src'].strip()
                 except: series['poster'] = ''
                 try: series['author'] = root.xpath('//section[@itemscope]/article/div[1]/div/div/div[2]/div[2]/a')[0].text_content().strip()
@@ -206,7 +207,12 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
                 for item in root.xpath('//ul[@class="list-body"]/li'):
                     episode = {}
                     episode['idx'] = int(item.xpath('div[1]')[0].text_content().strip())
-                    episode['title'] = ''.join(item.xpath('div[2]/a/text()')).strip()
+                    episode['title'] = u'%s' % ''.join(item.xpath('div[2]/a/text()')).strip()
+                    append_web_index = P.ModelSetting.get('{}_append_web_index'.format(module_name))
+                    if append_web_index != '':
+                        episode['title'] = append_web_index % episode['idx'] + ' ' + episode['title']
+                    #if episode['title'].endswidth('') == '…':
+                    #    episode['title'] += ' %s'  % episode['idx']
                     episode['url'] = item.xpath('div[2]/a')[0].attrib['href'].strip().split('?')[0]
                     match = re.compile(r'%s/(?P<code>.*?)($|/|\?)' % define[module_name]['url_prefix']).search(episode['url'])
                     episode['code'] = match.group('code')
@@ -440,10 +446,10 @@ def get_item_model(module_name):
         @classmethod
         def append(cls, q):
             item = cls()
-            item.title = q['info']['title']
-            item.code = q['info']['code']
-            item.series_code = q['info']['series_code']
-            item.series_title = q['info']['series_title']
+            item.title = u'%s' % q['info']['title']
+            item.code = u'%s' % q['info']['code']
+            item.series_code = u'%s' % q['info']['series_code']
+            item.series_title = u'%s' % q['info']['series_title']
             item.savepath = None 
             item.save()
 
