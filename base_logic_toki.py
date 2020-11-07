@@ -276,7 +276,7 @@ def get_queue_entity(module_name, ModelItem):
                 data = requests.get(url).text
                 tmp = ''.join(re.compile(r'html_data\+\=\'(.*?)\'\;').findall(data))
                 html = ''.join([chr(int(x, 16)) for x in tmp.rstrip('.').split('.')])
-                image_list = re.compile(r'src="/img/loading-image.gif"\sdata\-\w{11}="(.*?)"').findall(html)
+                image_list = re.compile(r'img\ssrc="/img/loading-image.gif"\sdata\-\w{11}="(.*?)"').findall(html)
                 self.total_image_count = len(image_list)
                 self.refresh_status()
                 download_folder = ModelSetting.get('{}_download_folder'.format(module_name))
