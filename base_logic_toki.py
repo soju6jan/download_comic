@@ -142,6 +142,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
 
         
         def scheduler_function(self):
+            self.check_url()
             self.restart_incompleted()
             code_list = ModelSetting.get_list('{}_auto_code_list'.format(module_name), ',')
             black_list = ModelSetting.get_list('{}_auto_black_code_list'.format(module_name), ',')
@@ -169,6 +170,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
                     time.sleep(ModelSetting.get_int('{}_auto_sleep_interval'.format(module_name)))
 
         def plugin_load(self):
+            self.check_url()
             self.queue = ComicQueue(self, P.ModelSetting.get_int('{}_max_queue_count'.format(module_name)))
             self.queue.queue_start()
             self.restart_incompleted()
@@ -258,6 +260,23 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
                 root = lxml.html.fromstring(requests.get(url).text)
                 ret = [ t.attrib['href'].split('webtoon/')[1].split('/')[0] for t in root.xpath('//div[@class="in-lable trans-bg-black"]/a[contains(@href,"/webtoon/")]') ]
             return ret[:30]
+        
+        def check_url(self):
+            url = ModelSetting.get('{}_url'.format(module_name))
+            no = int(re.compile(r'(?P<no>\d{2,3})').search(url).group('no'))
+            for i in range(20):
+                tmp = url.replace(str(no), str(no+i))
+                res = requests.get(tmp)
+                if res.history:
+                    ModelSetting.set('{}_url'.format(module_name), res.url.rstrip('/'))
+                    return
+                else:
+                    if res.status_code == 200:
+                        if url != tmp:
+                            ModelSetting.set('{}_url'.format(module_name), tmp)
+                        return
+
+
     return LogicToki
 
 
