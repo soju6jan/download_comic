@@ -54,6 +54,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
             '{}_all_download'.format(module_name) : 'False',
             '{}_queue_auto_clear'.format(module_name) : 'False',
             '{}_append_web_index'.format(module_name) : '',
+            '{}_auto_sleep_interval'.format(module_name) : '60',
         }
 
         def __init__(self, P):
@@ -164,6 +165,8 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
                 except Exception as e: 
                     P.logger.error('Exception:%s', e)
                     P.logger.error(traceback.format_exc())
+                finally:
+                    time.sleep(ModelSetting.get_int('{}_auto_sleep_interval'.format(module_name)))
 
         def plugin_load(self):
             self.queue = ComicQueue(self, P.ModelSetting.get_int('{}_max_queue_count'.format(module_name)))

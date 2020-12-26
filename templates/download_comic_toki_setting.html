@@ -33,6 +33,7 @@
       {{ macros.setting_input_textarea('auto_code_list', '자동 다운로드 만화 코드', value=arg['auto_code_list'], row='10', desc=['구분자 , 또는 엔터. # 주석 가능', 'all인 모두 다운로드.', '', '대상페이지', '마나토끼 : https://manatoki81.net/page/update', '뉴토끼 : https://newtoki81.com/webtoon']) }}
       {{ macros.setting_input_textarea('auto_black_code_list', '다운로드 제외 만화 코드', value=arg['auto_black_code_list'], row='3', desc=['자동 다운로드 만화 코드 값이 all 인 경우에만 사용', '구분자 , 또는 엔터. # 주석 가능']) }}
       {{ macros.setting_checkbox('all_download', 'All Download', value=arg['all_download'], desc=['On : 새로운 에피소드를 받을 때 이전 화 전부를 다운합니다.', '이미 받은 경우 제외']) }}
+      {{ macros.setting_input_int('auto_sleep_interval', 'Sleep 간격(초)', value=arg['auto_sleep_interval'], desc=None) }}
     {{ macros.m_tab_content_end() }}
     
     {{ macros.m_tab_content_start('etc', false) }}
