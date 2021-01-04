@@ -36,7 +36,7 @@ class P(object):
         'icon' : '',
         'developer' : 'soju6jan',
         'description' : u'만화 다운로드',
-        'home' : 'https://github.com/soju6jan/downloader_comic',
+        'home' : 'https://github.com/soju6jan/download_comic',
         'more' : '',
     }
     ModelSetting = get_model_setting(package_name, logger)
