@@ -24,12 +24,12 @@ ModelSetting = P.ModelSetting
 
 define = {
     'manatoki': {
-        'site_default' : 'https://manatoki81.net',
+        'site_default' : 'https://manatoki93.net',
         'kor_name' : u'마나토끼',
         'url_prefix' : 'comic',
     },
     'newtoki': {
-        'site_default' : 'https://newtoki81.com',
+        'site_default' : 'https://newtoki93.com',
         'kor_name' : u'뉴토끼',
         'url_prefix' : 'webtoon',
     },
