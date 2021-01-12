@@ -265,16 +265,19 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
             url = ModelSetting.get('{}_url'.format(module_name))
             no = int(re.compile(r'(?P<no>\d{2,3})').search(url).group('no'))
             for i in range(20):
-                tmp = url.replace(str(no), str(no+i))
-                res = requests.get(tmp)
-                if res.history:
-                    ModelSetting.set('{}_url'.format(module_name), res.url.rstrip('/'))
-                    return
-                else:
-                    if res.status_code == 200:
-                        if url != tmp:
-                            ModelSetting.set('{}_url'.format(module_name), tmp)
+                try:
+                    tmp = url.replace(str(no), str(no+i))
+                    res = requests.get(tmp)
+                    if res.history:
+                        ModelSetting.set('{}_url'.format(module_name), res.url.rstrip('/'))
                         return
+                    else:
+                        if res.status_code == 200:
+                            if url != tmp:
+                                ModelSetting.set('{}_url'.format(module_name), tmp)
+                            return
+                except:
+                    pass
 
 
     return LogicToki
