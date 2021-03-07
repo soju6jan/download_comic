@@ -46,6 +46,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
             '{}_download_folder'.format(module_name) : os.path.join(path_data, P.package_name, module_name),
             '{}_make_series_folder'.format(module_name) : 'True',
             '{}_use_zip'.format(module_name) : 'True', 
+            '{}_zip_extension'.format(module_name) : 'zip', 
             '{}_list_last_option'.format(module_name) : '',
             '{}_auto_start'.format(module_name) : 'False',
             '{}_interval'.format(module_name) : '180',
@@ -311,10 +312,11 @@ def get_queue_entity(module_name, ModelItem):
                 self.savepath = os.path.join(download_folder, Util.change_text_for_use_filename(self.info['title']))
                 if not os.path.exists(self.savepath):
                     os.makedirs(self.savepath)
-                if ModelSetting.get('{}_use_zip'.format(module_name)) and os.path.exists(self.savepath + '.zip'):
+                zip_extension = ModelSetting.get('{}_zip_extension'.format(module_name))
+                if ModelSetting.get('{}_use_zip'.format(module_name)) and os.path.exists(self.savepath + '.' + zip_extension):
                     self.percent = 100
                     self.set_status(u'파일 있음')
-                    self.savepath = self.savepath + '.zip'
+                    self.savepath = self.savepath + '.' + zip_extension
                     completed_flag = True
                     return
                 self.set_status(u'다운로드중')
@@ -340,9 +342,9 @@ def get_queue_entity(module_name, ModelItem):
                     self.refresh_status()
                     
                 if ModelSetting.get('{}_use_zip'.format(module_name)):
-                    self.set_status(u'Zip 생성중')
-                    Util.makezip(self.savepath)
-                    self.savepath = self.savepath + '.zip'
+                    self.set_status(u'압축파일 생성중')
+                    Util.makezip(self.savepath, zip_extension=zip_extension)
+                    self.savepath = self.savepath + '.' + zip_extension
                 self.set_status(u'다운로드 완료')
                 completed_flag = True
             except Exception as e: 

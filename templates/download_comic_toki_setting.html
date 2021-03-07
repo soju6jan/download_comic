@@ -19,7 +19,8 @@
       {{ macros.setting_input_text_and_buttons('url', 'Site URL', [['go_btn', 'GO']], value=arg['url'], desc=None) }}
       {{ macros.setting_input_text('download_folder', '다운로드 경로', value=arg['download_folder']) }}
       {{ macros.setting_checkbox('make_series_folder', '제목별 폴더', value=arg['make_series_folder'], desc=['On : 작품별로 폴더를 생성하여 저장', 'Off : 다운로드 경로 루트에 저장']) }}
-      {{ macros.setting_checkbox('use_zip', 'ZIP', value=arg['use_zip'], desc=['On : 압축', 'Off : 에피소드별 폴더 안에 이미지 파일']) }}
+      {{ macros.setting_checkbox('use_zip', '압축', value=arg['use_zip'], desc=['On : 압축', 'Off : 에피소드별 폴더 안에 이미지 파일']) }}
+      {{ macros.setting_input_text('zip_extension', '압축파일 확장자', value=arg['zip_extension'], col=3) }}
       {{ macros.setting_input_int('max_queue_count', '동시 다운로드 수', value=arg['max_queue_count']) }}
       {{ macros.setting_checkbox('order_desc', '에피소드 최신순', value=arg['order_desc']) }}
       {{ macros.setting_checkbox('queue_auto_clear', '완료시 자동으로 큐목록에서 삭제', value=arg['queue_auto_clear']) }}
