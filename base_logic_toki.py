@@ -24,12 +24,12 @@ ModelSetting = P.ModelSetting
 
 define = {
     'manatoki': {
-        'site_default' : 'https://manatoki93.net',
+        'site_default' : 'https://manatoki95.net',
         'kor_name' : u'마나토끼',
         'url_prefix' : 'comic',
     },
     'newtoki': {
-        'site_default' : 'https://newtoki93.com',
+        'site_default' : 'https://newtoki95.com',
         'kor_name' : u'뉴토끼',
         'url_prefix' : 'webtoon',
     },
@@ -67,7 +67,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
         def process_menu(self, sub, req):
             arg = P.ModelSetting.to_dict()
             arg['sub'] = self.name
-            for key, value in arg.items():
+            for key, value in list(arg.items()):
                 if key.startswith(self.name):
                     arg[key.replace(self.name+'_','')] = value
                     del arg[key]
@@ -268,7 +268,7 @@ def get_logic(module_name, ModelItem, ComicQueueEntityModule):
             for i in range(20):
                 try:
                     tmp = url.replace(str(no), str(no+i))
-                    res = requests.get(tmp)
+                    res = requests.get(tmp, timeout=5)
                     if res.history:
                         ModelSetting.set('{}_url'.format(module_name), res.url.rstrip('/'))
                         return
