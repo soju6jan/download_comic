@@ -13,7 +13,7 @@ import lxml.html
 from framework import db, scheduler, path_data, socketio
 from framework.util import Util
 from framework.common.util import headers
-from framework.common.plugin import LogicModuleBase, default_route_socketio
+from plugin import LogicModuleBase, default_route_socketio
 # 패키지
 from .plugin import P
 from .comic_queue import ComicQueue, ComicQueueEntity
